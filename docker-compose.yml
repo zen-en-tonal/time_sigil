@@ -1,9 +1,0 @@
-version: '3'
-services:
-  toki:
-    build: .
-    ports:
-      - 3000:3000
-
-  yagura:
-    image: zenentonal/yagura:v0.0.5
