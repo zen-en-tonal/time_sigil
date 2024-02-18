@@ -1,12 +1,10 @@
 [package]
 name = "tr"
-version = "0.1.0"
+version = "0.0.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-serde = { version = "1.0.196", features = ["derive", "serde_derive"] }
 tokio = { version = "1.36.0", features = ["full"] }
-uuid = { version = "1.7.0", features = ["v4", "serde", "fast-rng"] }
 tokio-util = "0.7.10"
