@@ -45,16 +45,14 @@ where
     }
 
     async fn listening(mut self) {
-        loop {
-            if let Some(recv) = self.rx.recv().await {
-                match recv {
-                    Command::Enque(item) => {
-                        self.queue.enque(item);
-                    }
-                    Command::Deque(tx) => {
-                        let item = self.queue.deque();
-                        let _ = tx.send(item);
-                    }
+        while let Some(recv) = self.rx.recv().await {
+            match recv {
+                Command::Enque(item) => {
+                    self.queue.enque(item);
+                }
+                Command::Deque(tx) => {
+                    let item = self.queue.deque();
+                    let _ = tx.send(item);
                 }
             }
         }

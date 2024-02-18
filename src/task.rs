@@ -25,10 +25,8 @@ pub async fn task<T, Q>(
 }
 
 async fn work<T, Q>(t: impl Task<T, Q>, request_queue: Handler<T>, result_queue: Handler<Q>) {
-    loop {
-        if let Ok(Some(req)) = request_queue.deque().await {
-            let res = t.run(req);
-            let _ = result_queue.enque(res).await;
-        }
+    while let Ok(Some(req)) = request_queue.deque().await {
+        let res = t.run(req);
+        let _ = result_queue.enque(res).await;
     }
 }
