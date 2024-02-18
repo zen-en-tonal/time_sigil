@@ -7,4 +7,5 @@ edition = "2021"
 
 [dependencies]
 tokio = { version = "1.36.0", features = ["full"] }
+tokio-cron-scheduler = "0.10.0"
 tokio-util = "0.7.10"

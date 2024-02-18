@@ -52,6 +52,11 @@ where
     B: Sync + Send + 'static,
 {
     pub async fn listen(self, cancel: CancellationToken) -> Result<(), Error> {
+        tokio::spawn(self.listening(cancel));
+        Ok(())
+    }
+
+    async fn listening(self, cancel: CancellationToken) -> Result<(), Error> {
         let mut set = tokio::task::JoinSet::new();
         set.spawn(self.task_q.listen(cancel.clone()));
         set.spawn(self.res_q.listen(cancel.clone()));
@@ -65,6 +70,7 @@ where
     }
 }
 
+#[derive(Debug)]
 pub struct Handler<T, Q> {
     task_h: queue::Handler<T>,
     res_h: queue::Handler<Q>,
@@ -77,6 +83,15 @@ impl<T, Q> Handler<T, Q> {
 
     pub async fn pop_result(&self) -> Result<Option<Q>, Error> {
         self.res_h.deque().await
+    }
+}
+
+impl<T, Q> Clone for Handler<T, Q> {
+    fn clone(&self) -> Self {
+        Self {
+            task_h: self.task_h.clone(),
+            res_h: self.res_h.clone(),
+        }
     }
 }
 
