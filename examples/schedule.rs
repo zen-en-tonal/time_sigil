@@ -4,7 +4,7 @@ use tr::*;
 
 #[tokio::main]
 async fn main() {
-    let (runner, handler) = new(VecDeque::<Task>::new(), VecDeque::<Task>::new(), task, 1);
+    let (runner, handler) = service::new(VecDeque::<Task>::new(), VecDeque::<Task>::new(), task, 1);
 
     let token = CancellationToken::new();
 
