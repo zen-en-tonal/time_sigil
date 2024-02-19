@@ -1,6 +1,6 @@
 [package]
 name = "time_sigil"
-version = "0.0.2"
+version = "0.0.1"
 edition = "2021"
 authors = ["Takeru KODAMA <zen.en.tonal@gmail.com>"]
 description = "task scheduler"
