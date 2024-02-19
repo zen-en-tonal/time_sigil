@@ -1,10 +1,10 @@
 [package]
-name = "tr"
+name = "time_sigil"
 version = "0.0.2"
 edition = "2021"
 authors = ["Takeru KODAMA <zen.en.tonal@gmail.com>"]
 description = "task scheduler"
-repository = "https://github.com/zen-en-tonal/tr"
+repository = "https://github.com/zen-en-tonal/time_sigil"
 license = "MIT OR Apache-2.0"
 keywords = ["task"]
 

@@ -767,6 +767,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2047c6ded9c721764247e62cd3b03c09ffc529b2ba5b10ec482ae507a4a70160"
 
 [[package]]
+name = "time_sigil"
+version = "0.0.2"
+dependencies = [
+ "axum",
+ "serde",
+ "tokio",
+ "tokio-cron-scheduler",
+ "tokio-util",
+ "uuid",
+]
+
+[[package]]
 name = "tokio"
 version = "1.36.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -852,18 +864,6 @@ name = "tower-service"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b6bc1c9ce2b5135ac7f93c72918fc37feb872bdc6a5533a8b85eb4b86bfdae52"
-
-[[package]]
-name = "tr"
-version = "0.0.2"
-dependencies = [
- "axum",
- "serde",
- "tokio",
- "tokio-cron-scheduler",
- "tokio-util",
- "uuid",
-]
 
 [[package]]
 name = "tracing"
