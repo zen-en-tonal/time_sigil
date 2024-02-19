@@ -1,15 +1,9 @@
-use std::collections::VecDeque;
 use time_sigil::*;
 use tokio_cron_scheduler::{Job, JobScheduler};
 
 #[tokio::main]
 async fn main() {
-    let (runner, handler) = service::new(
-        VecDeque::<Task>::new(),
-        VecDeque::<Task>::new(),
-        fn_task(task),
-        1,
-    );
+    let (runner, handler) = service::new_inmemory(fn_task(task));
 
     let token = CancellationToken::new();
 
@@ -21,7 +15,7 @@ async fn main() {
                 let sche_h = sched_handler.clone();
                 Box::pin(async move {
                     sche_h
-                        .push_task(Task {
+                        .push(Task {
                             uuid: uuid.to_string(),
                             msg: "hello".to_string(),
                         })
@@ -34,11 +28,11 @@ async fn main() {
         .await
         .unwrap();
 
-    runner.listen(token).await.unwrap();
+    runner.listen(1, token).await.unwrap();
     sched.start().await.unwrap();
 
     loop {
-        while let Ok(Some(x)) = handler.pop_result().await {
+        while let Ok(Some(x)) = handler.pull().await {
             println!("{:?}", x)
         }
     }

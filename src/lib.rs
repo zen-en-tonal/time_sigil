@@ -12,23 +12,17 @@ mod tasks;
 
 #[cfg(test)]
 mod tests {
-    use crate::{fn_task, service::new, CancellationToken};
-    use std::collections::VecDeque;
+    use crate::{fn_task, service::new_inmemory, CancellationToken};
 
     #[tokio::test]
     async fn test() {
-        let (runner, handler) = new(
-            VecDeque::<i32>::new(),
-            VecDeque::<i32>::new(),
-            fn_task(|x: i32| x + 1),
-            4,
-        );
+        let (runner, handler) = new_inmemory(fn_task(|x: i32| x + 1));
         let cancel = CancellationToken::new();
-        tokio::spawn(runner.listen(cancel.clone()));
+        tokio::spawn(runner.listen(4, cancel.clone()));
 
-        handler.push_task(0).await.unwrap();
+        handler.push(0).await.unwrap();
 
-        while let Ok(Some(x)) = handler.pop_result().await {
+        while let Ok(Some(x)) = handler.pull().await {
             assert_eq!(x, 1);
             cancel.cancel();
         }

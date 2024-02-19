@@ -7,15 +7,15 @@ use serde::{Deserialize, Serialize};
 use tokio_cron_scheduler::Job;
 
 pub use crate::schedule::{ScheduleHandler, Uuid};
-pub use crate::service::Handler;
+pub use crate::tasks::OneWay;
 pub use axum::Router;
 
 struct AppState<T, Q> {
-    handler: Handler<T, Q>,
+    handler: OneWay<Q, T>,
     scheduler: ScheduleHandler,
 }
 
-pub fn router<T, Q>(handler: Handler<T, Q>, scheduler: ScheduleHandler) -> Router
+pub fn router<T, Q>(handler: OneWay<Q, T>, scheduler: ScheduleHandler) -> Router
 where
     T: Sync + Send + 'static + for<'de> Deserialize<'de> + Clone,
     Q: Sync + Send + 'static,
@@ -30,7 +30,7 @@ where
 }
 
 async fn new_task<T, Q>(State(h): State<Arc<AppState<T, Q>>>, Json(t): Json<T>) -> StatusCode {
-    match h.handler.push_task(t).await {
+    match h.handler.push(t).await {
         Ok(_) => StatusCode::ACCEPTED,
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
     }
@@ -60,7 +60,7 @@ where
         let sche_h = state.handler.clone();
         let task = t.task.clone();
         Box::pin(async move {
-            sche_h.push_task(task).await.unwrap();
+            sche_h.push(task).await.unwrap();
         })
     })
     .unwrap();
