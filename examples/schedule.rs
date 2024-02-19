@@ -1,20 +1,26 @@
-use time_sigil::*;
-use tokio_cron_scheduler::{Job, JobScheduler};
+use time_sigil::{
+    schedule::{Job, Schedule},
+    *,
+};
 
 #[tokio::main]
 async fn main() {
-    let (runner, handler) = service::new_inmemory(fn_task(task));
+    let (runner, handler) = service::new_inmemory(fn_task(|t| t));
 
     let token = CancellationToken::new();
 
-    let sched = JobScheduler::new().await.unwrap();
-    let sched_handler = handler.clone();
-    sched
+    let (sched, sched_handler) = Schedule::new().await;
+
+    runner.listen(1, token.clone()).await.unwrap();
+    sched.start().await.unwrap();
+
+    let h = handler.clone();
+    let id = sched_handler
         .add(
             Job::new_async("1/10 * * * * *", move |uuid, _| {
-                let sche_h = sched_handler.clone();
+                let handler = h.clone();
                 Box::pin(async move {
-                    sche_h
+                    handler
                         .push(Task {
                             uuid: uuid.to_string(),
                             msg: "hello".to_string(),
@@ -27,15 +33,15 @@ async fn main() {
         )
         .await
         .unwrap();
-
-    runner.listen(1, token).await.unwrap();
-    sched.start().await.unwrap();
+    println!("job {} was added.", id);
 
     loop {
-        while let Ok(Some(x)) = handler.pull().await {
-            println!("{:?}", x)
+        if let Ok(Some(x)) = handler.pull().await {
+            println!("{:?}", x);
+            break;
         }
     }
+    token.cancel();
 }
 
 #[derive(Debug)]
@@ -43,8 +49,4 @@ async fn main() {
 struct Task {
     uuid: String,
     msg: String,
-}
-
-fn task(t: Task) -> Task {
-    t
 }
