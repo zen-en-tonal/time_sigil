@@ -4,14 +4,15 @@ pub use task::{Task, TaskRunner};
 pub use tokio_util::sync::CancellationToken;
 
 mod errors;
+pub mod http;
 mod queue;
-mod schedule;
+pub mod schedule;
 pub mod service;
 mod task;
 
 #[cfg(test)]
 mod tests {
-    use crate::{new, CancellationToken};
+    use crate::{service::new, CancellationToken};
     use std::collections::VecDeque;
 
     #[tokio::test]
