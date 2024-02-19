@@ -1,7 +1,12 @@
 [package]
 name = "tr"
-version = "0.0.1"
+version = "0.0.2"
 edition = "2021"
+authors = ["Takeru KODAMA <zen.en.tonal@gmail.com>"]
+description = "task scheduler"
+repository = "https://github.com/zen-en-tonal/tr"
+license = "MIT OR Apache-2.0"
+keywords = ["task"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
