@@ -1,6 +1,6 @@
 pub use errors::Error;
 pub use queue::{Queue, Server};
-pub use task::{Task, TaskRunner};
+pub use task::{fn_task, Task, TaskRunner};
 pub use tokio_util::sync::CancellationToken;
 
 mod errors;
@@ -12,7 +12,7 @@ mod task;
 
 #[cfg(test)]
 mod tests {
-    use crate::{service::new, CancellationToken};
+    use crate::{fn_task, service::new, CancellationToken};
     use std::collections::VecDeque;
 
     #[tokio::test]
@@ -20,7 +20,7 @@ mod tests {
         let (runner, handler) = new(
             VecDeque::<i32>::new(),
             VecDeque::<i32>::new(),
-            |x: i32| x + 1,
+            fn_task(|x: i32| x + 1),
             4,
         );
         let cancel = CancellationToken::new();

@@ -4,7 +4,12 @@ use tokio_cron_scheduler::{Job, JobScheduler};
 
 #[tokio::main]
 async fn main() {
-    let (runner, handler) = service::new(VecDeque::<Task>::new(), VecDeque::<Task>::new(), task, 1);
+    let (runner, handler) = service::new(
+        VecDeque::<Task>::new(),
+        VecDeque::<Task>::new(),
+        fn_task(task),
+        1,
+    );
 
     let token = CancellationToken::new();
 
