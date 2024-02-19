@@ -1,34 +1,34 @@
+use crate::{errors::Error, queue::Handler, Task};
 use tokio_util::sync::CancellationToken;
 
-use crate::{errors::Error, queue::Handler};
-
-pub trait Task<T, Q>: Sized {
-    fn run(&self, req: T) -> Q;
-
-    fn into_runner(self, req_q: Handler<T>, res_q: Handler<Q>) -> TaskRunner<T, Q, Self> {
+pub trait IntoTaskRunner<T, Q>: Sized {
+    fn into_task_runner(
+        self,
+        req_queue: Handler<T>,
+        res_queue: Handler<Q>,
+    ) -> TaskRunner<T, Q, Self> {
         TaskRunner {
             task: self,
-            req_q,
-            res_q,
+            req_q: req_queue,
+            res_q: res_queue,
         }
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct FnTask<T> {
-    inner: T,
-}
-
-pub fn fn_task<F, T, Q>(f: F) -> FnTask<F>
+impl<F, T, Q> IntoTaskRunner<T, Q> for F
 where
-    F: Fn(T) -> Q + Clone,
+    F: Task<T, Q> + Sized,
 {
-    FnTask { inner: f }
-}
-
-impl<F: Fn(T) -> Q + Clone, T, Q> Task<T, Q> for FnTask<F> {
-    fn run(&self, req: T) -> Q {
-        (self.inner)(req)
+    fn into_task_runner(
+        self,
+        req_queue: Handler<T>,
+        res_queue: Handler<Q>,
+    ) -> TaskRunner<T, Q, Self> {
+        TaskRunner {
+            task: self,
+            req_q: req_queue,
+            res_q: res_queue,
+        }
     }
 }
 

@@ -1,6 +1,6 @@
 pub use errors::Error;
 pub use queue::{Queue, Server};
-pub use task::{fn_task, Task, TaskRunner};
+pub use tasks::{fn_task, IntoTaskRunner, Task, TaskRunner};
 pub use tokio_util::sync::CancellationToken;
 
 mod errors;
@@ -8,7 +8,7 @@ pub mod http;
 mod queue;
 pub mod schedule;
 pub mod service;
-mod task;
+mod tasks;
 
 #[cfg(test)]
 mod tests {

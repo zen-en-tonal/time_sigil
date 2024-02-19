@@ -1,6 +1,6 @@
 use tokio_util::sync::CancellationToken;
 
-use crate::{queue, Error, Queue, Server, Task, TaskRunner};
+use crate::{queue, Error, IntoTaskRunner, Queue, Server, Task, TaskRunner};
 
 pub fn new<T, Q, A, B, F>(
     task_q: A,
@@ -11,11 +11,11 @@ pub fn new<T, Q, A, B, F>(
 where
     A: Queue<T>,
     B: Queue<Q>,
-    F: Task<T, Q> + Clone,
+    F: IntoTaskRunner<T, Q> + Clone,
 {
     let (t_s, t_h) = task_q.into_server(10);
     let (r_s, r_h) = res_q.into_server(10);
-    let t = task.into_runner(t_h.clone(), r_h.clone());
+    let t = task.into_task_runner(t_h.clone(), r_h.clone());
     let mut tasks = vec![];
     for _ in 0..num_task {
         tasks.push(t.clone());
